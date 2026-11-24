@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ restaurant.name }} · FriendlyEats{% endblock %}
+
+{% block flash %}
+    {% if msg == "created" %}<p class="flash flash-ok">Restaurante creado correctamente.</p>{% endif %}
+    {% if msg == "updated" %}<p class="flash flash-ok">Restaurante actualizado correctamente.</p>{% endif %}
+{% endblock %}
+
+{% block content %}
+<p><a href="/">← Volver al listado</a></p>
+
+<article class="detail">
+    {% if restaurant.photoUrl %}
+    <img class="detail-img" src="{{ restaurant.photoUrl }}" alt="Foto de {{ restaurant.name }}">
+    {% else %}
+    <div class="detail-img placeholder" aria-hidden="true">🍴</div>
+    {% endif %}
+
+    <div class="detail-body">
+        <h1>{{ restaurant.name }}</h1>
+        <dl>
+            <dt>Categoría</dt><dd>{{ restaurant.category }}</dd>
+            <dt>Ciudad</dt><dd>{{ restaurant.city }}</dd>
+            <dt>Precio</dt><dd class="price">{{ "$" * restaurant.price }}</dd>
+            <dt>Calificación</dt>
+            <dd>
+                {% if restaurant.numRatings %}
+                <span class="rating">★ {{ "%.1f"|format(restaurant.avgRating) }}</span>
+                ({{ restaurant.numRatings }} reseñas)
+                {% else %}
+                <span class="muted">Sin calificaciones todavía</span>
+                {% endif %}
+            </dd>
+        </dl>
+
+        <div class="actions">
+            <a class="btn" href="/restaurants/{{ restaurant.id }}/edit">Editar</a>
+            <button type="button" class="btn btn-danger" id="delete-btn"
+                    data-id="{{ restaurant.id }}" data-name="{{ restaurant.name }}">Eliminar</button>
+        </div>
+        <p id="message" class="message" role="status"></p>
+    </div>
+</article>
+{% endblock %}

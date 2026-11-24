@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+secrets/
+*service-account*.json
+*-adminsdk-*.json
+firebase-debug.log
+firestore-debug.log
+ui-debug.log

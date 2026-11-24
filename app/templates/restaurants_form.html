@@ -1,0 +1,31 @@
+xml
+<!-- app/templates/restaurant_form.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ "Editar" if restaurant else "Nuevo" }} restaurante</h1>
+
+<form id="restaurant-form">
+    <label>Nombre</label>
+    <input name="name" required value="{{ restaurant.name if restaurant else '' }}">
+    
+    <label>Categoría</label>
+    <input name="category" required value="{{ restaurant.category if restaurant else '' }}">
+    
+    <label>Ciudad</label>
+    <input name="city" required value="{{ restaurant.city if restaurant else '' }}">
+   
+    <label>Precio</label>
+    <select name="price" required>
+        <option value="1">$</option>
+        <option value="2">$$</option>
+        <option value="3">$$$</option>
+    </select>
+
+    <label>URL de imagen</label>
+    <input name="photoUrl" value="{{ restaurant.photoUrl if restaurant else '' }}">
+    
+    <button type="submit">Guardar</button>
+</form>
+<p id="message"></p>
+{% endblock %}

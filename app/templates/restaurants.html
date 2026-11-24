@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Restaurantes · FriendlyEats{% endblock %}
+
+{% block flash %}
+    {% if msg == "deleted" %}<p class="flash flash-ok">Restaurante eliminado correctamente.</p>{% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>Restaurantes populares de la zona</h1>
+
+<form class="filters" method="get" action="/">
+    <div>
+        <label for="city">Ciudad</label>
+        <input id="city" name="city" list="cities" value="{{ filters.city }}" placeholder="Todas">
+        <datalist id="cities">
+            {% for c in facets.cities %}<option value="{{ c }}">{% endfor %}
+        </datalist>
+    </div>
+    <div>
+        <label for="category">Categoría</label>
+        <input id="category" name="category" list="categories" value="{{ filters.category }}" placeholder="Todas">
+        <datalist id="categories">
+            {% for c in facets.categories %}<option value="{{ c }}">{% endfor %}
+        </datalist>
+    </div>
+    <div>
+        <label for="price">Precio</label>
+        <select id="price" name="price">
+            <option value="">Todos</option>
+            <option value="1" {{ "selected" if filters.price == "1" }}>$</option>
+            <option value="2" {{ "selected" if filters.price == "2" }}>$$</option>
+            <option value="3" {{ "selected" if filters.price == "3" }}>$$$</option>
+        </select>
+    </div>
+    <div>
+        <label for="order_by">Ordenar por</label>
+        <select id="order_by" name="order_by">
+            <option value="name" {{ "selected" if filters.order_by == "name" }}>Nombre (A-Z)</option>
+            <option value="avgRating" {{ "selected" if filters.order_by == "avgRating" }}>Mejor calificación</option>
+        </select>
+    </div>
+    <div class="filter-actions">
+        <button type="submit" class="btn">Filtrar</button>
+        <a class="btn btn-secondary" href="/">Limpiar</a>
+    </div>
+</form>
+
+{% if restaurants %}
+<section class="cards">
+    {% for r in restaurants %}
+    <article class="card">
+        {% if r.photoUrl %}
+        <img class="card-img" src="{{ r.photoUrl }}" alt="Foto de {{ r.name }}" loading="lazy">
+        {% else %}
+        <div class="card-img placeholder" aria-hidden="true">🍴</div>
+        {% endif %}
+        <div class="card-body">
+            <h2>{{ r.name }}</h2>
+            <p class="meta">{{ r.category }} · {{ r.city }}</p>
+            <p class="meta">
+                <span class="price">{{ "$" * r.price }}</span>
+                {% if r.numRatings %}
+                · <span class="rating">★ {{ "%.1f"|format(r.avgRating) }}</span> ({{ r.numRatings }})
+                {% else %}
+                · <span class="muted">Sin calificaciones</span>
+                {% endif %}
+            </p>
+            <a class="btn" href="/restaurants/{{ r.id }}">Ver detalles</a>
+        </div>
+    </article>
+    {% endfor %}
+</section>
+
+{% if next_cursor %}
+<p class="pager">
+    <a class="btn btn-secondary"
+       href="/?city={{ filters.city|urlencode }}&category={{ filters.category|urlencode }}&price={{ filters.price }}&order_by={{ filters.order_by }}&start_after={{ next_cursor }}">
+        Siguiente página →
+    </a>
+</p>
+{% endif %}
+
+{% else %}
+<div class="empty">
+    <p>No hay restaurantes que coincidan con los filtros.</p>
+    <a class="btn" href="/restaurants/new">Registrar un restaurante</a>
+</div>
+{% endif %}
+{% endblock %}
